@@ -31,41 +31,50 @@
 </head>
 <body>
 <div id="topbar">
-    <div style="display:flex; align-items:center;"><div style="font-weight: 800; font-size: 22px; color:white;">Cars<span style="color:var(--vixen)">.com</span></div><span id="logo-subtitle">Central NY Market Intelligence</span></div>
-    <div id="total-badge"><div class="num">332,683</div><div class="lbl">Total Searches</div></div>
+    <div style="display:flex; align-items:center;"><div style="font-weight: 800; font-size: 22px; color:white;">Cars<span style="color:var(--vixen)">.com</span></div><span id="logo-subtitle">CNY Market Intelligence</span></div>
+    <div id="total-badge"><div class="num" id="total-num">103,425</div><div class="lbl">Total Searches</div></div>
 </div>
 <div id="map"></div>
 <div id="stats" class="panel"><h3>Top 8 Cities</h3><div id="leaderboard"></div></div>
 
 <script>
-    const data = [
-        {name:"Syracuse",total:54158,lat:43.0481,lng:-76.1474,zips:"13421"},
-        {name:"Camillus",total:16734,lat:43.0392,lng:-76.3055,zips:"13057"},
-        {name:"Liverpool",total:15944,lat:43.1065,lng:-76.2177,zips:"13103, 13104"},
-        {name:"Auburn",total:13389,lat:42.9333,lng:-76.5666,zips:"13165"},
-        {name:"Ithaca",total:10906,lat:42.4440,lng:-76.5019,zips:"13065, 13066"},
-        {name:"Baldwinsville",total:10757,lat:43.1587,lng:-76.3327,zips:"13148"},
-        {name:"Oswego",total:9355,lat:43.4553,lng:-76.5105,zips:"13166"},
-        {name:"Rome",total:9227,lat:43.2128,lng:-75.4557,zips:"13036"},
-        {name:"Fulton",total:7973,lat:43.3223,lng:-76.4172,zips:"13041"},
-        {name:"Cicero",total:7288,lat:43.1759,lng:-76.1194,zips:"13032"},
-        {name:"Cortland",total:7194,lat:42.5992,lng:-76.1783,zips:"13029"}
+    const cities = [
+        {name:"Syracuse",total:27345,lat:43.0481,lng:-76.1474,zips:"13166"},
+        {name:"Oswego",total:9156,lat:43.4553,lng:-76.5105,zips:"13135"},
+        {name:"Cortland",total:8668,lat:42.5992,lng:-76.1783,zips:"13346"},
+        {name:"Cicero",total:7570,lat:43.1759,lng:-76.1194,zips:"13078"},
+        {name:"Central Square",total:4170,lat:43.2848,lng:-76.1458,zips:"13114"},
+        {name:"Ithaca",total:4036,lat:42.4440,lng:-76.5019,zips:"13140"},
+        {name:"Geneva",total:3411,lat:42.8689,lng:-76.9778,zips:"13132"},
+        {name:"East Syracuse",total:2892,lat:43.0651,lng:-76.0716,zips:"13118"},
+        {name:"Clay",total:2844,lat:43.1934,lng:-76.1841,zips:"13159"},
+        {name:"Canastota",total:2450,lat:43.0781,lng:-75.7513,zips:"13120"},
+        {name:"Seneca Falls",total:2371,lat:42.9106,lng:-76.7966,zips:"13030"},
+        {name:"Pulaski",total:1724,lat:43.5656,lng:-76.1260,zips:"13068, 14847"},
+        {name:"Weedsport",total:1660,lat:43.0487,lng:-76.5627,zips:"13116"},
+        {name:"Plainville",total:1521,lat:43.1492,lng:-76.4013,zips:"13461"}
     ];
 
-    const map = L.map('map', {center:[43.05, -76.15], zoom:9, zoomControl:false, attributionControl:false});
+    const map = L.map('map', {center:[43.10, -76.15], zoom:9, zoomControl:false, attributionControl:false});
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
     L.control.zoom({position:'topright'}).addTo(map);
 
-    const maxVal = data[0].total;
+    const maxVal = cities[0].total;
     const leaderboard = document.getElementById('leaderboard');
+    let grandTotal = 0;
 
-    data.forEach((c, i) => {
-        const r = Math.max(4, Math.sqrt(c.total) / 3.8); 
+    cities.forEach((c, i) => {
+        grandTotal += c.total;
+        const r = Math.max(5, Math.sqrt(c.total) / 3.2); 
         const circle = L.circleMarker([c.lat, c.lng], {
-            radius: r, fillColor: 'rgba(55, 11, 85, 0.7)', color: '#370B55', weight: 1.5, fillOpacity: 1
+            radius: r, fillColor: 'rgba(55, 11, 85, 0.72)', color: '#370B55', weight: 1.5, fillOpacity: 1
         }).addTo(map);
 
-        circle.bindTooltip(`<strong>${c.name}</strong><br>${c.total.toLocaleString()} searches<br>ZIP: ${c.zips}`, {className:'cars-tooltip', sticky:true});
+        circle.bindTooltip(`
+            <div style="font-weight:700;color:#370B55;font-size:14px;">${c.name}</div>
+            <div style="color:#8136B2;font-weight:600;">${c.total.toLocaleString()} searches</div>
+            <div style="font-size:10px;color:#888;margin-top:4px;">Primary ZIP: ${c.zips}</div>
+        `, {className:'cars-tooltip', sticky:true});
 
         if (i < 8) {
             const pct = (c.total / maxVal) * 100;
@@ -74,6 +83,8 @@
                 <div class="stat-bar-wrap"><div class="stat-bar" style="width:${pct}%"></div></div>`;
         }
     });
+
+    document.getElementById('total-num').textContent = grandTotal.toLocaleString();
 </script>
 </body>
 </html>
